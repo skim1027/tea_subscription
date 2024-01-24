@@ -1,6 +1,6 @@
 class Subscription < ApplicationRecord
-  has_many :subscription_teas
-  has_many :teas, through: :subscription_teas
+  has_many :teas
+  belongs_to :customer
   enum status: {"cancelled": 0, "active": 1}
 
   validates :title, presence: true
