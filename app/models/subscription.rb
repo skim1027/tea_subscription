@@ -1,5 +1,5 @@
 class Subscription < ApplicationRecord
-  has_many :teas
+  belongs_to :tea
   belongs_to :customer
   enum status: {"cancelled": 0, "active": 1}
 
@@ -7,4 +7,6 @@ class Subscription < ApplicationRecord
   validates :price, presence: true
   validates :status, presence: true
   validates :frequency, presence: true
+  validates :customer_id, presence: true
+  validates :tea_id, presence: true
 end
