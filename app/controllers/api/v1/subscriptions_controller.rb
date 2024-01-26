@@ -4,15 +4,24 @@ class Api::V1::SubscriptionsController < ApplicationController
     if new_subscription.save
       render json: SubscriptionSerializer.new(new_subscription), status: :ok
     else
-
+      render json: { errors: [title: 'Please input all the information to create a subscription', status: "400"]}, status: :bad_request
     end
   end
 
   def update
-    require 'pry'; binding.pry
+    subscription = Subscription.find(params[:id])
+    if subscription.update(update_subscription_params)
+      render json: SubscriptionSerializer.new(subscription), status: :ok
+    end
   end
+
   private
+  
   def subscription_params
     params.require(:subscription).permit(:title, :price, :frequency, :status, :customer_id, :tea_id)
+  end
+
+  def update_subscription_params
+    params.fetch(:subscription).permit(:status)
   end
 end
