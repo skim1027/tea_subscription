@@ -8,6 +8,9 @@ class Api::V1::SubscriptionsController < ApplicationController
     end
   end
 
+  def update
+    require 'pry'; binding.pry
+  end
   private
   def subscription_params
     params.require(:subscription).permit(:title, :price, :frequency, :status, :customer_id, :tea_id)

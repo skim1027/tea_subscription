@@ -34,4 +34,19 @@ describe "subscription API" do
     expect(subscription[:data][:attributes]).to have_key(:customer_id)
     expect(subscription[:data][:attributes]).to have_key(:tea_id)
   end
+
+  it 'updates a subscription for a customer' do
+    customer = Customer.create!(first_name: 'Tom', last_name: 'Riddle', email: 'triddle@email.com', address: '4 Privet Drive, Surrey, England')
+    tea1 = Tea.create!(title: 'Earl Grey', description: 'England Tea', temperature: 150, brew_time: '5 minutes')
+    subscription = Subscription.create!(title: 'Green Tea 1 per week', price: '$ 10', frequency: '1 per week', status: 1, tea_id: tea1.id, customer_id: customer.id)
+
+    subscription_params = { status: 0 }
+    headers = {"CONTENT_TYPE" => "application/json"}
+
+    patch "/api/v1/subscriptions/#{subscription.id}", headers: headers, params: subscription_params.to_json
+
+    expect(response.status).to eq(200)
+    
+    expect(subscription.status).to eq('cancelled')
+  end
 end
