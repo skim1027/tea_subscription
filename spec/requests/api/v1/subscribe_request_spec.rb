@@ -17,7 +17,7 @@ describe "subscription API" do
     headers = {"CONTENT_TYPE" => "application/json"}
     post '/api/v1/subscriptions', headers: headers, params: subscription_request.to_json
 
-    expect(response.status).to eq(200)
+    expect(response.status).to eq(201)
 
     subscription = JSON.parse(response.body, symbolize_names: true)  
 
@@ -70,5 +70,23 @@ describe "subscription API" do
 
     expect(response.status).to eq(200)
     expect(updated_subscription[:attributes][:status]).to eq('cancelled')
+  end
+
+  it 'only updates status for the subscription' do
+    customer = Customer.create!(first_name: 'Tom', last_name: 'Riddle', email: 'triddle@email.com', address: '4 Privet Drive, Surrey, England')
+    tea1 = Tea.create!(title: 'Earl Grey', description: 'England Tea', temperature: 150, brew_time: '5 minutes')
+    subscription = Subscription.create!(title: 'Green Tea 1 per week', price: '$ 10', frequency: '1 per week', status: 1, tea_id: tea1.id, customer_id: customer.id)
+
+    subscription_params = { title: 'Black Tea 1 per month' }
+    headers = {"CONTENT_TYPE" => "application/json"}
+
+    patch "/api/v1/subscriptions/#{subscription.id}", headers: headers, params: subscription_params.to_json
+
+    expect(response.status).to eq(422)
+
+    subscription = JSON.parse(response.body, symbolize_names: true)  
+
+    expect(subscription[:errors].first[:status]).to eq('422')
+    expect(subscription[:errors].first[:title]).to eq('Only status can be updated')
   end
 end

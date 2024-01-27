@@ -2,7 +2,7 @@ class Api::V1::SubscriptionsController < ApplicationController
   def create
     new_subscription = Subscription.new(subscription_params)
     if new_subscription.save
-      render json: SubscriptionSerializer.new(new_subscription), status: :ok
+      render json: SubscriptionSerializer.new(new_subscription), status: :created
     else
       render json: { errors: [title: 'Please input all the information to create a subscription', status: "400"]}, status: :bad_request
     end
@@ -10,8 +10,11 @@ class Api::V1::SubscriptionsController < ApplicationController
 
   def update
     subscription = Subscription.find(params[:id])
-    if subscription.update(update_subscription_params)
+    if params.key?(:status)
+      subscription.update(update_subscription_params)
       render json: SubscriptionSerializer.new(subscription), status: :ok
+    else
+      render json: { errors: [title: 'Only status can be updated', status: "422"] }, status: :unprocessable_entity
     end
   end
 
