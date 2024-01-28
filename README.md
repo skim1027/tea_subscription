@@ -28,6 +28,10 @@ If you want to checkout the end points using postman, please clone and/or fork t
   - Connect to `rails s`
   - Open postman, input endpoints and appropriate request
 
+##### Endpoints:
+  - post '/api/v1/subscriptions
+  - patch "/api/v1/subscriptions/subscription.id
+  - get '/api/v1/subscriptions'
 
  *example* <br>
   
