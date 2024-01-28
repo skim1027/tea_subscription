@@ -89,4 +89,26 @@ describe "subscription API" do
     expect(subscription[:errors].first[:status]).to eq('422')
     expect(subscription[:errors].first[:title]).to eq('Only status can be updated')
   end
+
+  it 'shows you all the subscriptions active and cancelled' do
+    customer = Customer.create!(first_name: 'Tom', last_name: 'Riddle', email: 'triddle@email.com', address: '4 Privet Drive, Surrey, England')
+    tea1 = Tea.create!(title: 'Earl Grey', description: 'England Tea', temperature: 150, brew_time: '5 minutes')
+    tea2 = Tea.create!(title: 'Green Tea', description: 'Green Tea', temperature: 160, brew_time: '3 minutes')
+    subscription1 = Subscription.create!(title: 'Green Tea 1 per week', price: '$ 10', frequency: '1 per week', status: 1, tea_id: tea1.id, customer_id: customer.id)
+    subscription2 = Subscription.create!(title: 'Green Tea 1 per week', price: '$ 10', frequency: '1 per week', status: 0, tea_id: tea2.id, customer_id: customer.id)
+
+    get '/api/v1/subscriptions'
+
+    expect(response).to be_successful
+
+    subscriptions = JSON.parse(response.body, symbolize_names: true)[:data]
+    expect(subscriptions.count).to eq(2)
+
+    # subscriptions.each do |subscription|
+    #   expect(subscription[:data][:attributes]).to have_key(:status)
+    # end
+
+    expect(subscriptions[0][:attributes][:status]).to eq('active')
+    expect(subscriptions[1][:attributes][:status]).to eq('cancelled')
+  end
 end
