@@ -1,7 +1,6 @@
 class Api::V1::SubscriptionsController < ApplicationController
   def index
     render json: SubscriptionSerializer.new(Subscription.all)
-    require 'pry'; binding.pry
   end
   
   def create
