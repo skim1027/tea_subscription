@@ -104,10 +104,6 @@ describe "subscription API" do
     subscriptions = JSON.parse(response.body, symbolize_names: true)[:data]
     expect(subscriptions.count).to eq(2)
 
-    # subscriptions.each do |subscription|
-    #   expect(subscription[:data][:attributes]).to have_key(:status)
-    # end
-
     expect(subscriptions[0][:attributes][:status]).to eq('active')
     expect(subscriptions[1][:attributes][:status]).to eq('cancelled')
   end
